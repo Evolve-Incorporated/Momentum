@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:user_location/user_location.dart';
 
 class MapWidget extends StatefulWidget {
   MapWidget({Key key}) : super(key: key);
@@ -10,16 +11,24 @@ class MapWidget extends StatefulWidget {
 }
 
 class _MapWidgetState extends State<MapWidget> {
-  _MapWidgetState() :
-      markers = <Marker>[];
+  final List<Marker> markers = <Marker>[];
+  final MapController mapController = MapController();
+  UserLocationOptions userLocationOptions;
 
-  final List<Marker> markers;
 
   @override
   Widget build(BuildContext context) {
+    userLocationOptions = UserLocationOptions(
+      context: context,
+      mapController: mapController,
+      markers: markers,
+    );
+
     return FlutterMap(
       options: MapOptions(
-
+        plugins: [
+          UserLocationPlugin(),
+        ]
       ),
       layers: [
         TileLayerOptions(
@@ -28,8 +37,10 @@ class _MapWidgetState extends State<MapWidget> {
         ),
         MarkerLayerOptions(
           markers: markers
-        )
+        ),
+        userLocationOptions,
       ],
+      mapController: mapController,
     );
   }
 
