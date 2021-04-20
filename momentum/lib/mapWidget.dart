@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:user_location/user_location.dart';
+import 'package:latlong/latlong.dart';
 
 class MapWidget extends StatefulWidget {
   MapWidget({Key key}) : super(key: key);
@@ -13,15 +17,50 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
   final List<Marker> markers = <Marker>[];
   final MapController mapController = MapController();
+  StreamController<LatLng> markerLocationStream = StreamController();
   UserLocationOptions userLocationOptions;
 
+  @override
+  void dispose() {
+    super.dispose();
+    markerLocationStream.close();
+  }
+
+  final Container toCurrentLocationButton = Container(
+    decoration: BoxDecoration(
+      color: Colors.greenAccent,
+      borderRadius: BorderRadius.circular(40.0),
+      boxShadow: [
+        BoxShadow(color: Colors.grey, blurRadius: 20.0),
+      ],
+    ),
+    child: Icon(
+      Icons.my_location,
+      color: Colors.white,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
+    markerLocationStream.stream.listen((onData) {
+      // print(onData.latitude);
+    });
+
     userLocationOptions = UserLocationOptions(
-      context: context,
-      mapController: mapController,
-      markers: markers,
+        context: context,
+        mapController: mapController,
+        markers: markers,
+        onLocationUpdate: (LatLng pos, double speed) =>
+            print("onLocationUpdate ${pos.toString()}"),
+        updateMapLocationOnPositionChange: false,
+        showMoveToCurrentLocationFloatingActionButton: true,
+        zoomToCurrentLocationOnLoad: false,
+        verbose: false,
+        onTapFAB: () => {
+          userLocationOptions.updateMapLocationOnPositionChange = true
+        },
+        locationUpdateIntervalMs: 1000,
+        moveToCurrentLocationFloatingActionButton: toCurrentLocationButton,
     );
 
     return FlutterMap(
