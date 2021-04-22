@@ -28,7 +28,7 @@ class _MapWidgetState extends State<MapWidget> {
 
   final Container toCurrentLocationButton = Container(
     decoration: BoxDecoration(
-      color: Colors.greenAccent,
+      color: Colors.green,
       borderRadius: BorderRadius.circular(40.0),
       boxShadow: [
         BoxShadow(color: Colors.grey, blurRadius: 20.0),
@@ -37,6 +37,7 @@ class _MapWidgetState extends State<MapWidget> {
     child: Icon(
       Icons.my_location,
       color: Colors.white,
+      size: 32.0,
     ),
   );
 
@@ -50,17 +51,20 @@ class _MapWidgetState extends State<MapWidget> {
         context: context,
         mapController: mapController,
         markers: markers,
-        onLocationUpdate: (LatLng pos, double speed) =>
-            print("onLocationUpdate ${pos.toString()}"),
-        updateMapLocationOnPositionChange: false,
+
+        updateMapLocationOnPositionChange: true,
         showMoveToCurrentLocationFloatingActionButton: true,
         zoomToCurrentLocationOnLoad: false,
         verbose: false,
-        onTapFAB: () => {
-          userLocationOptions.updateMapLocationOnPositionChange = true
+
+        onTapFAB: () {
+          userLocationOptions.updateMapLocationOnPositionChange = true;
         },
         locationUpdateIntervalMs: 1000,
+
         moveToCurrentLocationFloatingActionButton: toCurrentLocationButton,
+        fabWidth: 60,
+        fabHeight: 60,
     );
 
     return FlutterMap(
@@ -72,7 +76,7 @@ class _MapWidgetState extends State<MapWidget> {
       layers: [
         TileLayerOptions(
             urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            subdomains: ['a', 'b', 'c']
+            subdomains: ['a', 'b', 'c'],
         ),
         MarkerLayerOptions(
           markers: markers
