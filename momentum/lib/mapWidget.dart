@@ -20,9 +20,12 @@ class _MapWidgetState extends State<MapWidget> {
   StreamController<LatLng> markerLocationStream = StreamController();
   UserLocationOptions userLocationOptions;
 
+  MapPosition _currentMapPosition;
+
   @override
   void dispose() {
     super.dispose();
+    markerLocationStream.close();
     markerLocationStream.close();
   }
 
@@ -54,7 +57,7 @@ class _MapWidgetState extends State<MapWidget> {
 
         updateMapLocationOnPositionChange: true,
         showMoveToCurrentLocationFloatingActionButton: true,
-        zoomToCurrentLocationOnLoad: false,
+        zoomToCurrentLocationOnLoad: true,
         verbose: false,
 
         onTapFAB: () {
@@ -65,13 +68,23 @@ class _MapWidgetState extends State<MapWidget> {
         moveToCurrentLocationFloatingActionButton: toCurrentLocationButton,
         fabWidth: 60,
         fabHeight: 60,
+        defaultZoom: 13.0,
     );
 
     return FlutterMap(
       options: MapOptions(
         plugins: [
           UserLocationPlugin(),
-        ]
+        ],
+        zoom: 13.0,
+        onPositionChanged: (position, hasGesture) {
+          if (_currentMapPosition != null && _currentMapPosition.center != position.center) {
+            print('Map has been moved: free camera view!');
+            userLocationOptions.updateMapLocationOnPositionChange = false;
+          }
+
+          _currentMapPosition = position;
+        },
       ),
       layers: [
         TileLayerOptions(
