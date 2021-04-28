@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -17,17 +15,9 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
   final List<Marker> markers = <Marker>[];
   final MapController mapController = MapController();
-  StreamController<LatLng> markerLocationStream = StreamController();
   UserLocationOptions userLocationOptions;
 
   MapPosition _currentMapPosition;
-
-  @override
-  void dispose() {
-    super.dispose();
-    markerLocationStream.close();
-    markerLocationStream.close();
-  }
 
   final Container toCurrentLocationButton = Container(
     decoration: BoxDecoration(
@@ -44,12 +34,27 @@ class _MapWidgetState extends State<MapWidget> {
     ),
   );
 
+  void _addMarker(LatLng position) {
+    setState(() {
+      markers.add(
+        Marker(
+          point: position,
+          height: 32.0,
+          width: 32.0,
+          builder: (context) => Container(
+            child: Icon(
+              Icons.location_pin,
+              size: 32.0,
+              color: Colors.red,
+            ),
+          ),
+        )
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    markerLocationStream.stream.listen((onData) {
-      // print(onData.latitude);
-    });
-
     userLocationOptions = UserLocationOptions(
         context: context,
         mapController: mapController,
@@ -76,6 +81,7 @@ class _MapWidgetState extends State<MapWidget> {
         plugins: [
           UserLocationPlugin(),
         ],
+        onLongPress: _addMarker,
         zoom: 13.0,
         onPositionChanged: (position, hasGesture) {
           if (_currentMapPosition != null && _currentMapPosition.center != position.center) {
@@ -91,9 +97,7 @@ class _MapWidgetState extends State<MapWidget> {
             urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             subdomains: ['a', 'b', 'c'],
         ),
-        MarkerLayerOptions(
-          markers: markers
-        ),
+        MarkerLayerOptions(markers: markers),
         userLocationOptions,
       ],
       mapController: mapController,
