@@ -60,7 +60,7 @@ class _MapWidgetState extends State<MapWidget> {
         mapController: mapController,
         markers: markers,
 
-        updateMapLocationOnPositionChange: true,
+        updateMapLocationOnPositionChange: false,
         showMoveToCurrentLocationFloatingActionButton: true,
         zoomToCurrentLocationOnLoad: true,
         verbose: false,
