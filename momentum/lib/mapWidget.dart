@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:user_location/user_location.dart';
 import 'package:latlong/latlong.dart';
+import 'package:dart_random_choice/dart_random_choice.dart';
 
 class MapWidget extends StatefulWidget {
   MapWidget({Key key}) : super(key: key);
@@ -13,11 +14,17 @@ class MapWidget extends StatefulWidget {
 }
 
 class _MapWidgetState extends State<MapWidget> {
+  List<Color> pinColors = [];
   final List<Marker> markers = <Marker>[];
   final MapController mapController = MapController();
   UserLocationOptions userLocationOptions;
 
   MapPosition _currentMapPosition;
+
+  _MapWidgetState() {
+    pinColors.addAll(Colors.primaries);
+    pinColors.addAll(Colors.accents);
+  }
 
   final Container toCurrentLocationButton = Container(
     decoration: BoxDecoration(
@@ -36,6 +43,7 @@ class _MapWidgetState extends State<MapWidget> {
 
   void _addMarker(LatLng position) {
     setState(() {
+      final color = randomChoice(pinColors);
       markers.add(
         Marker(
           point: position,
@@ -45,7 +53,7 @@ class _MapWidgetState extends State<MapWidget> {
             child: Icon(
               Icons.location_pin,
               size: 32.0,
-              color: Colors.red,
+              color: color,
             ),
           ),
         )

@@ -35,6 +35,8 @@ dependencies:
     git:
       url: https://github.com/igaurab/user_location_plugin.git
 
+  dart_random_choice: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
