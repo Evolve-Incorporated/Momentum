@@ -16,6 +16,8 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
   List<Color> pinColors = [];
   final List<Marker> markers = <Marker>[];
+  final List<LatLng> userPins = <LatLng>[];
+  final List<Polyline> polylines = <Polyline>[];
   final MapController mapController = MapController();
   UserLocationOptions userLocationOptions;
 
@@ -47,9 +49,10 @@ class _MapWidgetState extends State<MapWidget> {
       markers.add(
         Marker(
           point: position,
-          height: 32.0,
-          width: 32.0,
+          height: 47.0,
+          width: 47.0,
           builder: (context) => Container(
+            padding: EdgeInsets.fromLTRB(7.5, 0, 7.5, 15),
             child: Icon(
               Icons.location_pin,
               size: 32.0,
@@ -58,6 +61,22 @@ class _MapWidgetState extends State<MapWidget> {
           ),
         )
       );
+
+      userPins.add(position);
+
+      print("New marker at: $position");
+      print("Current # of markers: ${userPins.length}");
+
+      if (userPins.length < 2) {
+        return;
+      }
+
+      final previousMarkerPosition = userPins.elementAt(userPins.length - 2);
+      final polyline = Polyline(
+        points: [previousMarkerPosition, position],
+        strokeWidth: 3.0,
+      );
+      polylines.add(polyline);
     });
   }
 
@@ -104,6 +123,10 @@ class _MapWidgetState extends State<MapWidget> {
         TileLayerOptions(
             urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             subdomains: ['a', 'b', 'c'],
+        ),
+        PolylineLayerOptions(
+          polylineCulling: true,
+          polylines: polylines,
         ),
         MarkerLayerOptions(markers: markers),
         userLocationOptions,
