@@ -9,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:momentum/main.dart';
-import 'package:momentum/mapWidget.dart';
+import 'package:momentum/homePage.dart';
 
 void main() {
   testWidgets('Home Page Test', (WidgetTester tester) async {
-    await tester.pumpWidget(const MapWidget(title: 'Momentum'));
+    await tester.pumpWidget(HomePage(title: 'Momentum'));
   });
 }
